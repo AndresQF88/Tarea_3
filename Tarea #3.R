@@ -4,6 +4,8 @@ library(sf)
 library(DT)
 library(plotly)
 library(leaflet)
+library(jsonlite)
+
 
 junco_vulcani <-
   st_read(
@@ -34,14 +36,15 @@ junco_vulcani <-
 # Tabla de registros de presencia
 junco_vulcani %>%
   st_drop_geometry() %>%
-  select(stateProvince, canton, locality, eventDate) %>%
+  select(stateProvince, canton, species, family, eventDate) %>%
   datatable(
-    colnames = c("Provincia", "Cantón", "Localidad", "Fecha"),
-    options = list(searchHighlight = TRUE),
-    searchHighlight = TRUE,
-    language = list(url ="https://raw.githubusercontent.com/gf0604-procesamientodatosgeograficos/2021i-datos/main/gbif/junco_vulcani-cr-registros.csv")
+    colnames = c("Provincia", "Cantón", "Especies", "Familia", "Fecha"),
+    options = list(
+      searchHighlight = TRUE,
+      language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json'),
+      pageLength = 5
+    )
   )
-
 
 options = list(
   searchHighlight = TRUE,
@@ -66,8 +69,83 @@ options = list(
   
   
   
+  
+  
+  
+# Gráfico Pastel
+View(junco_vulcani)
+ex_primates_cr <- data.frame("Categoria"=rownames(junco_vulcani), junco_vulcani) 
+primates_cr_data <- ex_junco_vulcani[,c('Categoria','species')]
+
+fig <-
+  plot_ly(
+    labels = ~ c("Ateles geoffroyi", "Cebus capucinus", "", ""),
+    values = ~ c(1994, 599, 453, 1463),
+    type = 'pie') %>%
+    config(locale = "es") %>% layout(
+    title = 'Especies de Junco Volcanico',
+    
+    xaxis = list(
+      showgrid = FALSE,
+      zeroline = FALSE,
+      showticklabels = FALSE
+    ),
+    
+    yaxis = list(
+      showgrid = FALSE,
+      zeroline = FALSE,
+      showticklabels = FALSE
+    )
+  )
+    
+fig
+
+  
+# Mapa de registros de presencia
+junco_vulcani %>%
+  select(stateProvince,
+         canton,
+         locality,
+         eventDate,
+         decimalLongitude,
+         decimalLatitude) %>%
+  leaflet() %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik, group = "OpenStreetMap") %>%
+  addProviderTiles(providers$Stamen.TonerLite, group = "Stamen Toner Lite") %>%
+  addProviderTiles(providers$Esri.WorldImagery, group = "Imágenes de ESRI") %>%
+  addCircleMarkers(
+    stroke = F,
+    radius = 4,
+    fillColor = 'gray',
+    fillOpacity = 1,
+    popup = paste(
+      junco_vulcani$stateProvince,
+      junco_vulcani$canton,
+      junco_vulcani$locality,
+      junco_vulcani$eventDate,
+      junco_vulcani$decimalLongitude,
+      junco_vulcani$decimalLatitude,
+      sep = '<br/>'
+    ),
+    group = "Junco vulcani"
+  ) %>%
+  addLayersControl(
+    baseGroups = c("OpenStreetMap", "Stamen Toner Lite", "Imágenes de ESRI"),
+    overlayGroups = c("Junco vulcani")
+  ) %>%
+  addMiniMap(
+    tiles = providers$Stamen.OpenStreetMap.Mapnik,
+    position = "bottomleft",
+    toggleDisplay = TRUE
+  )
+
+  
+  
+  
+  
+  
   # Mapa de registros de presencia
-  junco_vulcani %>%
+  primates_cr %>%
     select(stateProvince,
            canton,
            locality,
@@ -84,24 +162,23 @@ options = list(
       fillColor = 'gray',
       fillOpacity = 1,
       popup = paste(
-        junco_vulcani$stateProvince,
-        junco_vulcani$canton,
-        junco_vulcani$locality,
-        junco_vulcani$eventDate,
-        junco_vulcani$decimalLongitude,
-        junco_vulcani$decimalLatitude,
+        primates_cr$stateProvince,
+        primates_cr$canton,
+        primates_cr$locality,
+        primates_cr$eventDate,
+        primates_cr$decimalLongitude,
+        primates_cr$decimalLatitude,
         sep = '<br/>'
       ),
-      group = "Junco vulcani"
+      group = "Primates"
     ) %>%
     addLayersControl(
       baseGroups = c("OpenStreetMap", "Stamen Toner Lite", "Imágenes de ESRI"),
-      overlayGroups = c("Junco vulcani")
+      overlayGroups = c("Primates")
     ) %>%
     addMiniMap(
       tiles = providers$Stamen.OpenStreetMap.Mapnik,
       position = "bottomleft",
       toggleDisplay = TRUE
     )
-
-
+  
