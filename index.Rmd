@@ -107,8 +107,8 @@ primates_cr %>%
     addCircleMarkers(
       stroke = F,
       radius = 4,
-      fillColor = 'gray',
-      fillOpacity = 2,
+      fillColor = 'brown',
+      fillOpacity = 1,
       popup = paste(
         primates_cr$stateProvince,
         primates_cr$canton,
