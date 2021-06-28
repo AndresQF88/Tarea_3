@@ -1,0 +1,29 @@
+---
+title: "Primates de Costa Rica"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Preparativos
+```{r carga-paquetes, message=FALSE, echo=FALSE}
+# Carga de paquetes 
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(DT)
+library(plotly)
+library(leaflet)
+
+```
+
+
+# Introducción 
+
+# Tablas de registros presenciales 
+
+# Gráfico (Pastel)
+
+# Mapa de Distribución 

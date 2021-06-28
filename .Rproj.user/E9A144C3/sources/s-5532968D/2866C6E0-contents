@@ -1,0 +1,42 @@
+---
+title: "Primates de Costa Rica"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Preparativos
+```{r carga-paquetes, message=FALSE, echo=FALSE}
+# Carga de paquetes 
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(DT)
+library(plotly)
+library(leaflet)
+
+```
+
+```{r carga-datos, message=FALSE, echo=FALSE}
+primates_cr <-
+  st_read(
+    "https://raw.githubusercontent.com/gf0604-procesamientodatosgeograficos/2021i-datos/main/gbif/primates-cr-registros.csv",
+    options = c(
+      "X_POSSIBLE_NAMES=decimalLongitude",
+      "Y_POSSIBLE_NAMES=decimalLatitude"
+    ),
+    quiet = TRUE
+  )
+
+# Asignación de CRS
+st_crs(primates_cr) = 4326
+```
+
+
+# Tablas de registros presenciales 
+
+# Gráfico (Pastel)
+
+# Mapa de Distribución 
